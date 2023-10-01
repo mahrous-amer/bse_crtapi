@@ -1,0 +1,4 @@
+fastapi
+pyOpenSSL
+aiohttp
+aioprometheus[aiohttp]
