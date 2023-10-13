@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509.oid import NameOID
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 PUSH_GATEWAY_ADDR = os.environ.get('PUSH_GATEWAY_ADDR')
 logging.basicConfig(level=logging.INFO)
@@ -128,7 +128,7 @@ def validate_csr_type(csr_type: str):
         raise HTTPException(status_code=400, detail="Invalid csr_type. Accepted values: sandbox, simulation, production")
 
 
-app.post("/generate-csr/")
+@app.post("/generate-csr/")
 async def generate_csr_route(request_data: CSRRequest):
     counter.inc({"type": "generate-csr"})
     await pusher.replace(REGISTRY)
