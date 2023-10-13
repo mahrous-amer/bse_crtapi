@@ -37,6 +37,11 @@ class CSRRequest(BaseModel):
     CATEGORY: str
     ADDRESS: str
 
+    @validator("C")
+    def validate_country_name(cls, value):
+        if len(value) != 2:
+            raise ValueError("Country name must be exactly 2 characters")
+        return value
 
 def generate_key():
     private_key = ec.generate_private_key(
@@ -117,11 +122,18 @@ DNS.1 = {CN}
             status_code=500, detail=f"CSR generation failed: {str(e)}")
 
 
-@app.post("/generate-csr/")
+def validate_csr_type(csr_type: str):
+    valid_types = ["sandbox", "simulation", "production"]
+    if csr_type not in valid_types:
+        raise HTTPException(status_code=400, detail="Invalid csr_type. Accepted values: sandbox, simulation, production")
+
+
+app.post("/generate-csr/")
 async def generate_csr_route(request_data: CSRRequest):
     counter.inc({"type": "generate-csr"})
     await pusher.replace(REGISTRY)
     try:
+        validate_csr_type(request_data.csr_type)
         private_key_pem, csr_data = generate_csr(
             request_data.csr_type,
             request_data.C,
