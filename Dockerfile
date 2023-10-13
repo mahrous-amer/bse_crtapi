@@ -9,7 +9,6 @@ WORKDIR /app
 
 COPY main.py .
 COPY requirements.txt .
-COPY config.cnf .
 
 RUN apt-get update && \
     apt-get install -y openssl && \
