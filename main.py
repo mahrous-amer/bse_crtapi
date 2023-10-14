@@ -106,7 +106,7 @@ businessCategory = {CATEGORY}
     subprocess.run(command, shell=True, check=True)
     with open("encoded_csr.txt", "r") as csr_file:
         csr_data = csr_file.read()
-    return {"csr": csr_data}
+    return csr_data
 
 
 @app.get("/health")
@@ -161,9 +161,9 @@ async def test_cert(certificate: str, otp: str):
             "csr": certificate
         }
 
-        response = requests.post(
-            target_uri, headers=headers, json=json_payload)
+        response = requests.post(target_uri, headers=headers, json=json_payload)
         response_content = json.loads(response.content.decode('utf-8'))
+        logger.debug(f"CSR snadbox test response: {response_content}")
         if response.status_code == 200:
             return response_content
         else:
