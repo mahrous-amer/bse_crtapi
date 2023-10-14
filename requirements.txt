@@ -2,3 +2,5 @@ fastapi
 pyOpenSSL
 aiohttp
 aioprometheus[aiohttp]
+redis[hiredis]
+requests
